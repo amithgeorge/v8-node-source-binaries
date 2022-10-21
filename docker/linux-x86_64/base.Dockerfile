@@ -20,7 +20,9 @@ WORKDIR /
 
 ARG JAVET_V8_VERSION
 ARG JAVET_NODE_VERSION
+ARG JAVET_V8_BRANCH_HEAD
 
+RUN if [ -z "$JAVET_V8_BRANCH_HEAD" ]; then echo 'Build argument JAVET_V8_BRANCH_HEAD must be specified. Exiting.'; exit 1; fi
 RUN if [ -z "$JAVET_V8_VERSION" ]; then echo 'Build argument JAVET_V8_VERSION must be specified. Exiting.'; exit 1; fi
 RUN if [ -z "$JAVET_NODE_VERSION" ]; then echo 'Build argument JAVET_NODE_VERSION must be specified. Exiting.'; exit 1; fi
 # RUN echo "will build V8 $JAVET_V8_VERSION" && echo "will build Node $JAVET_NODE_VERSION"
@@ -58,11 +60,11 @@ WORKDIR /google
 RUN git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
 WORKDIR /google/depot_tools
 RUN git checkout remotes/origin/main
-ENV PATH=/google/depot_tools:$PATH
+ENV PATH=$(pwd):$PATH
 WORKDIR /google
-RUN fetch v8
+RUN fetch --nohistory v8
 WORKDIR /google/v8
-RUN git checkout 10.6.194.14
+RUN git checkout branch-heads/${JAVET_V8_BRANCH_HEAD}
 RUN sed -i 's/snapcraft/nosnapcraft/g' ./build/install-build-deps.sh
 RUN ./build/install-build-deps.sh
 RUN sed -i 's/nosnapcraft/snapcraft/g' ./build/install-build-deps.sh
@@ -70,31 +72,31 @@ WORKDIR /google
 RUN gclient sync
 RUN echo V8 preparation is completed.
 
-# Build V8
-WORKDIR /google/v8
-RUN python3 tools/dev/v8gen.py x64.release -- v8_monolithic=true v8_use_external_startup_data=false is_component_build=false v8_enable_i18n_support=false v8_enable_pointer_compression=false v8_static_library=true symbol_level=0 use_custom_libcxx=false v8_enable_sandbox=false
-COPY ./scripts/python/patch_v8_build.py .
-RUN ninja -C out.gn/x64.release v8_monolith || python3 patch_v8_build.py -p ./
-RUN ninja -C out.gn/x64.release v8_monolith
-RUN rm patch_v8_build.py
-RUN echo V8 build is completed.
+# # Build V8
+# WORKDIR /google/v8
+# RUN python3 tools/dev/v8gen.py x64.release -- v8_monolithic=true v8_use_external_startup_data=false is_component_build=false v8_enable_i18n_support=false v8_enable_pointer_compression=false v8_static_library=true symbol_level=0 use_custom_libcxx=false v8_enable_sandbox=false
+# COPY ./scripts/python/patch_v8_build.py .
+# RUN ninja -C out.gn/x64.release v8_monolith || python3 patch_v8_build.py -p ./
+# RUN ninja -C out.gn/x64.release v8_monolith
+# RUN rm patch_v8_build.py
+# RUN echo V8 build is completed.
 
 # Prepare Node.js v18
 WORKDIR /
-RUN git clone https://github.com/nodejs/node.git
+RUN git clone --depth=1 --branch=v${JAVET_NODE_VERSION} https://github.com/nodejs/node.git
 WORKDIR /node
-RUN git checkout v18.10.0
+# RUN git checkout v${JAVET_NODE_VERSION}
 RUN echo Node.js preparation is completed.
 
-# Build Node.js
-WORKDIR /node
-COPY ./scripts/python/patch_node_build.py .
-RUN python3 patch_node_build.py -p ./
-RUN ./configure --enable-static --without-intl
-RUN python3 patch_node_build.py -p ./
-RUN rm patch_node_build.py
-RUN make -j4
-RUN echo Node.js build is completed.
+# # Build Node.js
+# WORKDIR /node
+# COPY ./scripts/python/patch_node_build.py .
+# RUN python3 patch_node_build.py -p ./
+# RUN ./configure --enable-static --without-intl
+# RUN python3 patch_node_build.py -p ./
+# RUN rm patch_node_build.py
+# RUN make -j4
+# RUN echo Node.js build is completed.
 
 # Shrink
 RUN rm -rf ${SDKMAN_HOME}/archives/*

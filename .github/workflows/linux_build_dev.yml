@@ -10,6 +10,7 @@ on:
 
 env:
   DOCKERHUB_USERNAME: amithgeorge
+  JAVET_V8_BRANCH_HEAD: 10.6
   JAVET_V8_VERSION: 10.6.194.14
   JAVET_NODE_VERSION: 18.10.0
 
@@ -20,7 +21,7 @@ jobs:
     steps:
       - name: Set the IMAGE_TAG environment variable
         run: |
-          echo 'IMAGE_TAG=${{ env.DOCKERHUB_USERNAME }}/javet-linux-dev:v8-${{ env.JAVET_V8_VERSION }}_node-${{ env.JAVET_NODE_VERSION }}' >> $GITHUB_ENV
+          echo 'IMAGE_TAG=${{ env.DOCKERHUB_USERNAME }}/javet-linux-dev:smaller_attempt_v8-${{ env.JAVET_V8_VERSION }}_node-${{ env.JAVET_NODE_VERSION }}' >> $GITHUB_ENV
 
       - name: Checkout the code
         uses: actions/checkout@v2
@@ -29,6 +30,7 @@ jobs:
         run: |
           echo 'IMAGE_TAG is ${{ env.IMAGE_TAG }}'
           docker build -t ${{ env.IMAGE_TAG }} \
+                       --build-arg JAVET_V8_BRANCH_HEAD=${{ env.JAVET_V8_BRANCH_HEAD }} \
                        --build-arg JAVET_V8_VERSION=${{ env.JAVET_V8_VERSION }} \
                        --build-arg JAVET_NODE_VERSION=${{ env.JAVET_NODE_VERSION }} \
                        -f docker/linux-x86_64/base.Dockerfile .
