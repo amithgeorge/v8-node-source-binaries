@@ -1,0 +1,34 @@
+name: Linux Build Dev - V8 and Node
+
+on:
+  push:
+    branches:
+      - trigger
+
+env:
+  DOCKERHUB_USERNAME: amithgeorge
+  JAVET_V8_VERSION: 10.6.194.14
+  JAVET_NODE_VERSION: 18.10.0
+  IMAGE_TAG: amithgeorge/javet-linux-dev:v8-10.6.194.14_node-18.10.0
+  IMAGE_TAG_2: ${{ env.DOCKERHUB_USERNAME }}/javet-linux-dev:v8-${{ env.JAVET_V8_VERSION }}_node-${{ env.JAVET_NODE_VERSION }}
+
+jobs:
+  v8_node:
+    name: Publish container image with V8 source and binaries and Node.js source and binaries
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+
+      - name: Build docker image
+        run: |
+          echo 'IMAGE_TAG_2 is ${{ env.IMAGE_TAG_2 }}'
+          docker build -t ${{ env.IMAGE_TAG }} --progress=plain --no-cache \
+                       --build-arg JAVET_V8_VERSION=${{ env.JAVET_V8_VERSION }} \
+                       --build-arg JAVET_NODE_VERSION=${{ env.JAVET_NODE_VERSION }} \
+                       -f docker/linux-x86_64/base.Dockerfile .
+
+      - name: Publish the docker image
+        run: |
+          docker login --username ${{ env.DOCKERHUB_USERNAME }} --password ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+          docker push ${{ env.IMAGE_TAG }}
