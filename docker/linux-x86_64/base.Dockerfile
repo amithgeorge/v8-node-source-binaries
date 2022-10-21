@@ -52,33 +52,32 @@ RUN curl -s https://get.sdkman.io | bash
 RUN source ${SDKMAN_HOME}/bin/sdkman-init.sh && sdk install gradle 7.2
 ENV PATH=$GRADLE_HOME/bin:$PATH
 
+# Prepare V8
+RUN mkdir google
+WORKDIR /google
+RUN git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+WORKDIR /google/depot_tools
+RUN git checkout remotes/origin/main
+ENV PATH=/google/depot_tools:$PATH
+WORKDIR /google
+RUN fetch v8
+WORKDIR /google/v8
+RUN git checkout 10.6.194.14
+RUN sed -i 's/snapcraft/nosnapcraft/g' ./build/install-build-deps.sh
+RUN ./build/install-build-deps.sh
+RUN sed -i 's/nosnapcraft/snapcraft/g' ./build/install-build-deps.sh
+WORKDIR /google
+RUN gclient sync
+RUN echo V8 preparation is completed.
 
-# # Prepare V8
-# RUN mkdir google
-# WORKDIR /google
-# RUN git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
-# WORKDIR /google/depot_tools
-# RUN git checkout remotes/origin/main
-# ENV PATH=/google/depot_tools:$PATH
-# WORKDIR /google
-# RUN fetch v8
-# WORKDIR /google/v8
-# RUN git checkout 10.6.194.14
-# RUN sed -i 's/snapcraft/nosnapcraft/g' ./build/install-build-deps.sh
-# RUN ./build/install-build-deps.sh
-# RUN sed -i 's/nosnapcraft/snapcraft/g' ./build/install-build-deps.sh
-# WORKDIR /google
-# RUN gclient sync
-# RUN echo V8 preparation is completed.
-
-# # Build V8
-# WORKDIR /google/v8
-# RUN python3 tools/dev/v8gen.py x64.release -- v8_monolithic=true v8_use_external_startup_data=false is_component_build=false v8_enable_i18n_support=false v8_enable_pointer_compression=false v8_static_library=true symbol_level=0 use_custom_libcxx=false v8_enable_sandbox=false
-# COPY ./scripts/python/patch_v8_build.py .
-# RUN ninja -C out.gn/x64.release v8_monolith || python3 patch_v8_build.py -p ./
-# RUN ninja -C out.gn/x64.release v8_monolith
-# RUN rm patch_v8_build.py
-# RUN echo V8 build is completed.
+# Build V8
+WORKDIR /google/v8
+RUN python3 tools/dev/v8gen.py x64.release -- v8_monolithic=true v8_use_external_startup_data=false is_component_build=false v8_enable_i18n_support=false v8_enable_pointer_compression=false v8_static_library=true symbol_level=0 use_custom_libcxx=false v8_enable_sandbox=false
+COPY ./scripts/python/patch_v8_build.py .
+RUN ninja -C out.gn/x64.release v8_monolith || python3 patch_v8_build.py -p ./
+RUN ninja -C out.gn/x64.release v8_monolith
+RUN rm patch_v8_build.py
+RUN echo V8 build is completed.
 
 # Prepare Node.js v18
 WORKDIR /
@@ -96,7 +95,6 @@ RUN python3 patch_node_build.py -p ./
 RUN rm patch_node_build.py
 RUN make -j4
 RUN echo Node.js build is completed.
-
 
 # Shrink
 RUN rm -rf ${SDKMAN_HOME}/archives/*

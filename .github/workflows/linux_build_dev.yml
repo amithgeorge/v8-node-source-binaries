@@ -25,7 +25,7 @@ jobs:
       - name: Build docker image
         run: |
           echo 'IMAGE_TAG is ${{ env.IMAGE_TAG }}'
-          docker build -t ${{ env.IMAGE_TAG }} --progress=plain \
+          docker build -t amithgeorge/javet-linux-dev:orig -t ${{ env.IMAGE_TAG }} \
                        --build-arg JAVET_V8_VERSION=${{ env.JAVET_V8_VERSION }} \
                        --build-arg JAVET_NODE_VERSION=${{ env.JAVET_NODE_VERSION }} \
                        -f docker/linux-x86_64/base.Dockerfile .
@@ -34,3 +34,4 @@ jobs:
         run: |
           docker login --username ${{ env.DOCKERHUB_USERNAME }} --password ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
           docker push ${{ env.IMAGE_TAG }}
+          docker push amithgeorge/javet-linux-dev:orig
