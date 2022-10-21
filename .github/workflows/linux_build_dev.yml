@@ -15,9 +15,11 @@ jobs:
   v8_node:
     name: Publish container image with V8 source and binaries and Node.js source and binaries
     runs-on: ubuntu-20.04
-    env:
-      IMAGE_TAG_2: ${{ env.DOCKERHUB_USERNAME }}/javet-linux-dev:v8-${{ env.JAVET_V8_VERSION }}_node-${{ env.JAVET_NODE_VERSION }}
     steps:
+      - name: Set the IMAGE_TAG environment variable
+        run: |
+          echo 'IMAGE_TAG_2=${{ env.DOCKERHUB_USERNAME }}/javet-linux-dev:v8-${{ env.JAVET_V8_VERSION }}_node-${{ env.JAVET_NODE_VERSION }}' >> $GITHUB_ENV
+
       - name: Checkout the code
         uses: actions/checkout@v2
 
