@@ -1,7 +1,7 @@
 name: Linux Build Dev - V8 and Node
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
   push:
     branches:
       - branch_does_not_exist
