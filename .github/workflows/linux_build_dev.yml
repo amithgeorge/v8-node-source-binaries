@@ -1,9 +1,10 @@
 name: Linux Build Dev - V8 and Node
 
 on:
+  workflow_dispatch
   push:
     branches:
-      - trigger
+      - branch_does_not_exist
 
 env:
   DOCKERHUB_USERNAME: amithgeorge
