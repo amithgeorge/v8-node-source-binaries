@@ -1,10 +1,12 @@
 name: Linux Build Dev - V8 and Node
 
 on:
+  # trigger manually
   workflow_dispatch:
+  # trigger on pushing a tag named dummy
   push:
-    branches:
-      - branch_does_not_exist
+    tags:
+      - "dummy*"
 
 env:
   DOCKERHUB_USERNAME: amithgeorge
