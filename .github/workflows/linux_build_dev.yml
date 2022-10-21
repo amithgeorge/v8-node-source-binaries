@@ -10,12 +10,13 @@ env:
   JAVET_V8_VERSION: 10.6.194.14
   JAVET_NODE_VERSION: 18.10.0
   IMAGE_TAG: amithgeorge/javet-linux-dev:v8-10.6.194.14_node-18.10.0
-  IMAGE_TAG_2: ${{ env.DOCKERHUB_USERNAME }}/javet-linux-dev:v8-${{ env.JAVET_V8_VERSION }}_node-${{ env.JAVET_NODE_VERSION }}
 
 jobs:
   v8_node:
     name: Publish container image with V8 source and binaries and Node.js source and binaries
     runs-on: ubuntu-20.04
+    env:
+      IMAGE_TAG_2: ${{ env.DOCKERHUB_USERNAME }}/javet-linux-dev:v8-${{ env.JAVET_V8_VERSION }}_node-${{ env.JAVET_NODE_VERSION }}
     steps:
       - name: Checkout the code
         uses: actions/checkout@v2
