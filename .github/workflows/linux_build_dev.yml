@@ -25,7 +25,7 @@ jobs:
       - name: Build docker image
         run: |
           echo 'IMAGE_TAG is ${{ env.IMAGE_TAG }}'
-          docker build -t ${{ env.IMAGE_TAG }} --progress=plain --no-cache \
+          docker build -t ${{ env.IMAGE_TAG }} --progress=plain \
                        --build-arg JAVET_V8_VERSION=${{ env.JAVET_V8_VERSION }} \
                        --build-arg JAVET_NODE_VERSION=${{ env.JAVET_NODE_VERSION }} \
                        -f docker/linux-x86_64/base.Dockerfile .
