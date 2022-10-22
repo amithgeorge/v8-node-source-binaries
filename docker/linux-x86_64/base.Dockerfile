@@ -30,8 +30,8 @@ RUN if [ -z "$JAVET_NODE_VERSION" ]; then echo 'Build argument JAVET_NODE_VERSIO
 # Update Ubuntu
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update
-RUN apt-get install --upgrade -qq -y --no-install-recommends git curl wget build-essential software-properties-common patchelf maven sudo zip unzip execstack cmake
-RUN apt-get install --upgrade -qq -y --no-install-recommends python3 python python3-pip python3-distutils python3-testresources
+RUN apt-get install --upgrade -qq --yes --no-install-recommends git curl wget build-essential software-properties-common patchelf maven sudo zip unzip execstack cmake
+RUN apt-get install --upgrade -qq --yes --no-install-recommends python3 python python3-pip python3-distutils python3-testresources
 RUN apt-get upgrade -y
 RUN pip3 install coloredlogs
 
@@ -60,7 +60,7 @@ WORKDIR /google
 RUN git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
 WORKDIR /google/depot_tools
 RUN git checkout remotes/origin/main
-ENV PATH=$(pwd):$PATH
+ENV PATH=/google/depot_tools:$PATH
 WORKDIR /google
 RUN fetch --nohistory v8
 WORKDIR /google/v8
