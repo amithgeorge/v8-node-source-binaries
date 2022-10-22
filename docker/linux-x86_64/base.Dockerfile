@@ -35,24 +35,24 @@ RUN apt-get install --upgrade -qq -y --no-install-recommends python3 python pyth
 RUN apt-get upgrade -y
 RUN pip3 install coloredlogs
 
-# Install CMake
-RUN wget https://github.com/Kitware/CMake/releases/download/v3.21.4/cmake-3.21.4-linux-x86_64.sh
-RUN chmod 755 cmake-3.21.4-linux-x86_64.sh
-RUN mkdir -p /usr/lib/cmake
-RUN ./cmake-3.21.4-linux-x86_64.sh --skip-license --exclude-subdir --prefix=/usr/lib/cmake
-RUN ln -sf /usr/lib/cmake/bin/cmake /usr/bin/cmake
-RUN ln -sf /usr/lib/cmake/bin/cmake /bin/cmake
-RUN rm cmake-3.21.4-linux-x86_64.sh
+# # Install CMake
+# RUN wget https://github.com/Kitware/CMake/releases/download/v3.21.4/cmake-3.21.4-linux-x86_64.sh
+# RUN chmod 755 cmake-3.21.4-linux-x86_64.sh
+# RUN mkdir -p /usr/lib/cmake
+# RUN ./cmake-3.21.4-linux-x86_64.sh --skip-license --exclude-subdir --prefix=/usr/lib/cmake
+# RUN ln -sf /usr/lib/cmake/bin/cmake /usr/bin/cmake
+# RUN ln -sf /usr/lib/cmake/bin/cmake /bin/cmake
+# RUN rm cmake-3.21.4-linux-x86_64.sh
 
-# Prepare Javet Build Environment
-RUN apt-get install --upgrade -qq -y --no-install-recommends openjdk-8-jdk
-ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-ENV SDKMAN_HOME="/root/.sdkman"
-ENV GRADLE_HOME="${SDKMAN_HOME}/candidates/gradle/current"
-RUN curl -s https://get.sdkman.io | bash
-RUN source ${SDKMAN_HOME}/bin/sdkman-init.sh && sdk install gradle 7.2
-ENV PATH=$GRADLE_HOME/bin:$PATH
+# # Prepare Javet Build Environment
+# RUN apt-get install --upgrade -qq -y --no-install-recommends openjdk-8-jdk
+# ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+# RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+# ENV SDKMAN_HOME="/root/.sdkman"
+# ENV GRADLE_HOME="${SDKMAN_HOME}/candidates/gradle/current"
+# RUN curl -s https://get.sdkman.io | bash
+# RUN source ${SDKMAN_HOME}/bin/sdkman-init.sh && sdk install gradle 7.2
+# ENV PATH=$GRADLE_HOME/bin:$PATH
 
 # Prepare V8
 RUN mkdir google
@@ -98,12 +98,12 @@ RUN echo Node.js preparation is completed.
 # RUN make -j4
 # RUN echo Node.js build is completed.
 
-# Shrink
-RUN rm -rf ${SDKMAN_HOME}/archives/*
-RUN rm -rf ${SDKMAN_HOME}/tmp/*
-RUN apt-get clean -y
-RUN rm -rf /var/lib/apt/lists/*
-WORKDIR /
+# # Shrink
+# RUN rm -rf ${SDKMAN_HOME}/archives/*
+# RUN rm -rf ${SDKMAN_HOME}/tmp/*
+# RUN apt-get clean -y
+# RUN rm -rf /var/lib/apt/lists/*
+# WORKDIR /
 
 # # Pre-cache Dependencies
 # RUN mkdir Javet
