@@ -23,6 +23,12 @@ jobs:
         run: |
           echo 'IMAGE_TAG=${{ env.DOCKERHUB_USERNAME }}/javet-linux-dev:smaller_attempt_v8-${{ env.JAVET_V8_VERSION }}_node-${{ env.JAVET_NODE_VERSION }}' >> $GITHUB_ENV
 
+      - name: Login to Docker Hub
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        with:
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+
       - name: Checkout the code
         uses: actions/checkout@v2
 
@@ -37,5 +43,5 @@ jobs:
 
       - name: Publish the docker image
         run: |
-          docker login --username ${{ env.DOCKERHUB_USERNAME }} --password ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+          # docker login --username ${{ env.DOCKERHUB_USERNAME }} --password ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
           docker push ${{ env.IMAGE_TAG }}
