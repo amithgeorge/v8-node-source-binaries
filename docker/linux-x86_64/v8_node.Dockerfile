@@ -26,6 +26,10 @@ FROM amithgeorge/javet-linux-dev:base-v8-$JAVET_V8_VERSION as base-v8
 ARG JAVET_NODE_VERSION
 FROM amithgeorge/javet-linux-dev:base-node-$JAVET_NODE_VERSION as base-node
 
+# we could base the final image off the `base-v8` image, that would save us time copying the /google folder
+# however, the resulting image is almost 1GB bigger than using base-jvm as the base
+# for now, we will optimize for getting a smaller image
+
 # final image
 FROM amithgeorge/javet-linux-dev:base-jvm-latest
 
