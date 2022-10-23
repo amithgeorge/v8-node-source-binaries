@@ -16,11 +16,6 @@ on:
         default: false
         type: boolean
 
-  # trigger on pushing a tag named dummy
-  push:
-    tags:
-      - "dummy*"
-
 env:
   DOCKERHUB_USERNAME: amithgeorge
   JAVET_V8_VERSION: 10.6.194.14

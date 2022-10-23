@@ -5,10 +5,6 @@ concurrency:
 on:
   # trigger manually
   workflow_dispatch:
-  # trigger on pushing a tag named dummy
-  push:
-    tags:
-      - "dummy*"
 
 env:
   DOCKERHUB_USERNAME: amithgeorge
