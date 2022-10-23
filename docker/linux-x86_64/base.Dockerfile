@@ -50,8 +50,10 @@ ENV SDKMAN_HOME="/root/.sdkman"
 ENV GRADLE_HOME="${SDKMAN_HOME}/candidates/gradle/current"
 ENV PATH=$GRADLE_HOME/bin:$PATH
 
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh \
-	&& curl -s https://get.sdkman.io | bash \
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+# these two commands need to be on separate lines, else the symlink created above is not visible to the commands run below.
+# if the two RUN commmands are merged, we get the error "source: not found"
+RUN curl -s https://get.sdkman.io | bash \
 	&& source ${SDKMAN_HOME}/bin/sdkman-init.sh \
 	&& sdk install gradle 7.2 \
 	&& rm -rf ${SDKMAN_HOME}/archives/* \
@@ -85,8 +87,8 @@ ENV PATH=/google/depot_tools:$PATH
 # #RUN gclient sync
 # RUN gclient sync --no-history
 # RUN echo V8 preparation is completed.
-COPY --chmod=755 ./scripts/shell/fetch_v8_source .
-RUN ./fetch_v8_source
+COPY ./scripts/shell/fetch_v8_source .
+RUN bash fetch_v8_source
 
 # Build V8
 WORKDIR /google/v8
@@ -96,8 +98,8 @@ COPY ./scripts/python/patch_v8_build.py .
 # RUN ninja -C out.gn/x64.release v8_monolith
 # RUN rm patch_v8_build.py
 # RUN echo V8 build is completed.
-COPY --chmod=755 ./scripts/shell/build_v8_source .
-RUN ./build_v8_source
+COPY ./scripts/shell/build_v8_source .
+RUN bash ./build_v8_source
 
 # Prepare Node.js v18
 WORKDIR /
@@ -105,8 +107,8 @@ WORKDIR /
 # WORKDIR /node
 # RUN git checkout v${JAVET_NODE_VERSION}
 # RUN echo Node.js preparation is completed.
-COPY --chmod=755 ./scripts/shell/fetch_node_source .
-RUN ./fetch_node_source
+COPY ./scripts/shell/fetch_node_source .
+RUN bash ./fetch_node_source
 
 # Build Node.js
 WORKDIR /node
@@ -117,8 +119,8 @@ COPY ./scripts/python/patch_node_build.py .
 # RUN rm patch_node_build.py
 # RUN make -j4
 # RUN echo Node.js build is completed.
-COPY --chmod=755 ./scripts/shell/build_node_source .
-RUN ./build_node_source
+COPY ./scripts/shell/build_node_source .
+RUN bash ./build_node_source
 
 # # Shrink
 # RUN rm -rf ${SDKMAN_HOME}/archives/*
