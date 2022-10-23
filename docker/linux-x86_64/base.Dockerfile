@@ -26,13 +26,15 @@ RUN if [ -z "$JAVET_NODE_VERSION" ]; then echo 'Build argument JAVET_NODE_VERSIO
 
 # Update Ubuntu
 ENV DEBIAN_FRONTEND=noninteractive
+# files need to be cleaned/deleted in the same RUN layer that adds them, else there is no actual size reduction benefit
+# the files remain in the image, just the layer marks the file as deleted and is not visible inside the OS
 RUN apt-get update --yes \
 	&& apt-get install --upgrade -qq --yes --no-install-recommends \
 	build-essential cmake curl execstack git maven openjdk-8-jdk \
 	patchelf python3 python python3-pip python3-distutils python3-testresources \
 	software-properties-common sudo unzip wget zip \
 	&& apt-get upgrade --yes \
-	&& pip3 install coloredlogs \
+	&& pip3 install --no-cache-dir coloredlogs \
 	&& apt-get clean --yes
 
 # Install CMake
