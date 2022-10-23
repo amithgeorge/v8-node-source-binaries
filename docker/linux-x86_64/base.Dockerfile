@@ -20,12 +20,9 @@ WORKDIR /
 
 ARG JAVET_V8_VERSION
 ARG JAVET_NODE_VERSION
-ARG JAVET_V8_BRANCH_HEAD
 
-RUN if [ -z "$JAVET_V8_BRANCH_HEAD" ]; then echo 'Build argument JAVET_V8_BRANCH_HEAD must be specified. Exiting.'; exit 1; fi
 RUN if [ -z "$JAVET_V8_VERSION" ]; then echo 'Build argument JAVET_V8_VERSION must be specified. Exiting.'; exit 1; fi
 RUN if [ -z "$JAVET_NODE_VERSION" ]; then echo 'Build argument JAVET_NODE_VERSION must be specified. Exiting.'; exit 1; fi
-# RUN echo "will build V8 $JAVET_V8_VERSION" && echo "will build Node $JAVET_NODE_VERSION"
 
 # Update Ubuntu
 ENV DEBIAN_FRONTEND=noninteractive
