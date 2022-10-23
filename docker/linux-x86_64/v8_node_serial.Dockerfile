@@ -65,79 +65,24 @@ RUN curl -s https://get.sdkman.io | bash \
 WORKDIR /google
 ENV DEPOT_TOOLS_UPDATE=0
 ENV PATH=/google/depot_tools:$PATH
-# RUN git clone --depth=10 --branch=main https://chromium.googlesource.com/chromium/tools/depot_tools.git
-# WORKDIR /google/depot_tools
-# RUN git checkout remotes/origin/main
-
-# WORKDIR /google
-# RUN fetch --nohistory v8
-# RUN mkdir v8 && cd v8 && \
-# 	git init . && \
-# 	git fetch https://chromium.googlesource.com/v8/v8.git +refs/tags/${JAVET_V8_VERSION}:v8_${JAVET_V8_VERSION} --depth 1 && \
-# 	git checkout tags/${JAVET_V8_VERSION} && \
-# 	cd ../ && \
-# 	gclient root && \
-# 	gclient config --spec 'solutions = [{"name": "v8","url": "https://chromium.googlesource.com/v8/v8.git","deps_file": "DEPS","managed": False,"custom_deps": {},},]' && \
-# 	gclient sync --no-history && \
-# 	gclient runhooks
-# WORKDIR /google/v8
-# RUN git checkout branch-heads/${JAVET_V8_BRANCH_HEAD}
-# RUN sed -i 's/snapcraft/nosnapcraft/g' ./build/install-build-deps.sh
-# RUN ./build/install-build-deps.sh
-# RUN sed -i 's/nosnapcraft/snapcraft/g' ./build/install-build-deps.sh
-# WORKDIR /google
-# #RUN gclient sync
-# RUN gclient sync --no-history
-# RUN echo V8 preparation is completed.
 COPY ./scripts/shell/fetch_v8_source .
 RUN bash fetch_v8_source
 
 # Build V8
 WORKDIR /google/v8
 COPY ./scripts/python/patch_v8_build.py .
-# RUN python3 tools/dev/v8gen.py x64.release -- v8_monolithic=true v8_use_external_startup_data=false is_component_build=false v8_enable_i18n_support=false v8_enable_pointer_compression=false v8_static_library=true symbol_level=0 use_custom_libcxx=false v8_enable_sandbox=false
-# RUN ninja -C out.gn/x64.release v8_monolith || python3 patch_v8_build.py -p ./
-# RUN ninja -C out.gn/x64.release v8_monolith
-# RUN rm patch_v8_build.py
-# RUN echo V8 build is completed.
 COPY ./scripts/shell/build_v8_source .
 RUN bash ./build_v8_source
 
 # Prepare Node.js v18
 WORKDIR /
-# RUN git clone --depth=1 --branch=v${JAVET_NODE_VERSION} https://github.com/nodejs/node.git
-# WORKDIR /node
-# RUN git checkout v${JAVET_NODE_VERSION}
-# RUN echo Node.js preparation is completed.
 COPY ./scripts/shell/fetch_node_source .
 RUN bash ./fetch_node_source
 
 # Build Node.js
 WORKDIR /node
 COPY ./scripts/python/patch_node_build.py .
-# RUN python3 patch_node_build.py -p ./
-# RUN ./configure --enable-static --without-intl
-# RUN python3 patch_node_build.py -p ./
-# RUN rm patch_node_build.py
-# RUN make -j4
-# RUN echo Node.js build is completed.
 COPY ./scripts/shell/build_node_source .
 RUN bash ./build_node_source
 
-# # Shrink
-# RUN rm -rf ${SDKMAN_HOME}/archives/*
-# RUN rm -rf ${SDKMAN_HOME}/tmp/*
-# RUN apt-get clean -y
-# RUN rm -rf /var/lib/apt/lists/*
-# WORKDIR /
-
-# # Pre-cache Dependencies
-# RUN mkdir Javet
-# WORKDIR /Javet
-# COPY . .
-# RUN gradle dependencies
-# WORKDIR /
-# RUN rm -rf /Javet
-
-# # Completed
-# RUN echo Javet build base image is completed.
+RUN echo Javet build base image is completed.

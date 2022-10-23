@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Set the IMAGE_TAG environment variable
         run: |
-          echo 'IMAGE_TAG=${{ env.DOCKERHUB_USERNAME }}/javet-linux-dev:v8-${{ env.JAVET_V8_VERSION }}_node-${{ env.JAVET_NODE_VERSION }}_shallow' >> $GITHUB_ENV
+          echo 'IMAGE_TAG=${{ env.DOCKERHUB_USERNAME }}/javet-linux-dev:v8-${{ env.JAVET_V8_VERSION }}_node-${{ env.JAVET_NODE_VERSION }}_shallow_serial' >> $GITHUB_ENV
 
       - name: Login to Docker Hub
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
@@ -36,7 +36,7 @@ jobs:
             -t ${{ env.IMAGE_TAG }} \
             --build-arg JAVET_V8_VERSION=${{ env.JAVET_V8_VERSION }} \
             --build-arg JAVET_NODE_VERSION=${{ env.JAVET_NODE_VERSION }} \
-            -f docker/linux-x86_64/base.Dockerfile .
+            -f docker/linux-x86_64/v8_node_serial.Dockerfile .
 
       - name: Publish the docker image
         run: |
