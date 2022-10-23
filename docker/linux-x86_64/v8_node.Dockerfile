@@ -17,16 +17,12 @@
 #  -t amithgeorge/javet-linux-dev:v8-$JAVET_V8_VERSION_node-$JAVET_NODE_VERSION \
 #  -f docker/linux-x86_64/base-node.Dockerfile .
 
-
-# ARG JAVET_V8_VERSION
-# RUN if [ -z "$JAVET_V8_VERSION" ]; then echo 'Build argument JAVET_V8_VERSION must be specified. Exiting.'; exit 1; fi
-
-# ARG JAVET_NODE_VERSION
-# RUN if [ -z "$JAVET_NODE_VERSION" ]; then echo 'Build argument JAVET_NODE_VERSION must be specified. Exiting.'; exit 1; fi
-
 ARG JAVET_V8_VERSION
+ARG JAVET_NODE_VERSION
 FROM amithgeorge/javet-linux-dev:base-v8-$JAVET_V8_VERSION as base-v8
 
+# the ARG JAVET_NODE_VERSION needs to be declared twice due to how Dockerfile treats ARG and FROM
+# Reference - https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 ARG JAVET_NODE_VERSION
 FROM amithgeorge/javet-linux-dev:base-node-$JAVET_NODE_VERSION as base-node
 
@@ -36,3 +32,5 @@ FROM amithgeorge/javet-linux-dev:base-jvm-latest
 RUN mkdir -p /google && mkdir -p /node
 COPY --from=base-v8 /google /google
 COPY --from=base-node /node /node
+
+WORKDIR /Javet
