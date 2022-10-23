@@ -8,9 +8,9 @@ sh ./build-linux.sh -DNODE_DIR=/node
 popd
 
 touch src/main/resources/libjavet-v8*
-# gradle build test --rerun-tasks --debug
-gradle build test --rerun-tasks
+gradle build test --rerun-tasks --debug
+# gradle build test --rerun-tasks
 
 touch src/main/resources/libjavet-node*
-# gradle test --rerun-tasks --debug
-gradle test --rerun-tasks
+gradle test --rerun-tasks --debug
+# gradle test --rerun-tasks
