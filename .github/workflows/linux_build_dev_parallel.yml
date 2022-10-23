@@ -30,7 +30,7 @@ jobs:
   publish_base_jvm:
     name: Ubuntu, build tools and JDK 8 - Publish container image
     runs-on: ubuntu-20.04
-    if: inputs.skip_base_jvm != false
+    if: inputs.skip_base_jvm == false
     steps:
       - name: Set the IMAGE_TAG environment variable
         run: |
@@ -60,7 +60,7 @@ jobs:
     needs: [publish_base_jvm]
     name: V8 - Publish container image with source and compiled binaries
     runs-on: ubuntu-20.04
-    if: inputs.skip_base_v8 != false
+    if: inputs.skip_base_v8 == false
     steps:
       - name: Set the IMAGE_TAG environment variable
         run: |
@@ -91,7 +91,7 @@ jobs:
     needs: [publish_base_jvm]
     name: Node.js - Publish container image with source and compiled binaries
     runs-on: ubuntu-20.04
-    if: inputs.skip_base_node != false
+    if: inputs.skip_base_node == false
     steps:
       - name: Set the IMAGE_TAG environment variable
         run: |
