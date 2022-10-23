@@ -1,5 +1,7 @@
 name: Linux Parallel Build Dev - V8 and Node
-concurrency: linux_build
+concurrency:
+  group: linux_build
+  cancel-in-progress: true
 on:
   # trigger manually
   workflow_dispatch:
@@ -15,7 +17,7 @@ env:
 
 jobs:
   publish_base_jvm:
-    name: Publish container image with updated Ubuntu, build tools and JDK 8
+    name: Ubuntu, build tools and JDK 8 - Publish container image
     runs-on: ubuntu-20.04
     steps:
       - name: Set the IMAGE_TAG environment variable
@@ -44,7 +46,7 @@ jobs:
 
   publish_base_v8:
     needs: [publish_base_jvm]
-    name: Publish container image with V8 source and compiled binaries
+    name: V8 - Publish container image with source and compiled binaries
     runs-on: ubuntu-20.04
     steps:
       - name: Set the IMAGE_TAG environment variable
@@ -74,7 +76,7 @@ jobs:
 
   publish_base_node:
     needs: [publish_base_jvm]
-    name: Publish container image with Node.js source and compiled binaries
+    name: Node.js - Publish container image with source and compiled binaries
     runs-on: ubuntu-20.04
     steps:
       - name: Set the IMAGE_TAG environment variable
@@ -96,7 +98,7 @@ jobs:
           docker build \
             -t ${{ env.IMAGE_TAG }} \
             --build-arg JAVET_NODE_VERSION=${{ env.JAVET_NODE_VERSION }} \
-            -f docker/linux-x86_64/base-v8.Dockerfile .
+            -f docker/linux-x86_64/base-node.Dockerfile .
 
       - name: Publish the docker image
         run: |
@@ -104,7 +106,7 @@ jobs:
 
   publish_v8_node:
     needs: [publish_base_v8, publish_base_node]
-    name: Publish container image with V8 source and binaries and Node.js source and binaries
+    name: V8 and Node.js - Publish container image with V8 source and binaries and Node.js source and binaries
     runs-on: ubuntu-20.04
     steps:
       - name: Set the IMAGE_TAG environment variable
@@ -127,7 +129,7 @@ jobs:
             -t ${{ env.IMAGE_TAG }} \
             --build-arg JAVET_V8_VERSION=${{ env.JAVET_V8_VERSION }} \
             --build-arg JAVET_NODE_VERSION=${{ env.JAVET_NODE_VERSION }} \
-            -f docker/linux-x86_64/base.Dockerfile .
+            -f docker/linux-x86_64/v8_node.Dockerfile .
 
       - name: Publish the docker image
         run: |

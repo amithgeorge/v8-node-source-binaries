@@ -1,5 +1,7 @@
 name: Linux Build Dev - V8 and Node
-concurrency: linux_build
+concurrency:
+  group: linux_build
+  cancel-in-progress: true
 on:
   # trigger manually
   workflow_dispatch:
