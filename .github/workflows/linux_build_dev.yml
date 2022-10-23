@@ -1,5 +1,5 @@
 name: Linux Build Dev - V8 and Node
-
+concurrency: linux_build
 on:
   # trigger manually
   workflow_dispatch:
